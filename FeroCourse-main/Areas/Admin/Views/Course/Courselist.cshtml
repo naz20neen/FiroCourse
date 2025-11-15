@@ -1,0 +1,72 @@
+﻿
+@{
+	ViewData["Title"] = "Course List";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+	
+}
+@model IEnumerable<FeroCourse.Data.Dtos.CourseVM>
+
+
+
+<div class="col-md-12">
+	<div class="card">
+		<div class="card-header">
+			<h5>Course List</h5>
+
+		</div>
+		<div class="card-body table-border-style">
+			<div class="table-responsive">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Course Title</th>
+							<th>Instructor Name</th>
+							<th>Price</th>
+							<th>Discount Price</th>
+							<th>Image</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						@{
+							foreach (var item in Model)
+							{
+								<tr>
+									
+									<td>@item.Title </td>
+									<td>@item.InstructorName </td>
+									<td>@item.Price </td>
+									<td>@item.DiscountPrice </td>
+									<td>
+										@if (!string.IsNullOrEmpty(item.ThumbnailPath))
+										{
+											<img src="~/@item.ThumbnailPath" class="img-fluid img-thumbnail" width="70" height="90" />
+										}
+									</td>
+
+									<td>
+										<div class="d-flex justify-content-around-content-center gap-2">
+
+											<button type="button" class="btn btn-success btn-sm btn-edit" data-id="@item.CourseId">
+												Edit
+											</button>
+											<button type="button" class="btn btn-danger btn-sm btn-dlt" data-id="@item.CourseId">
+												Delete
+											</button>
+
+
+										</div>
+									</td>
+								</tr>
+
+							}
+
+						}
+
+					</tbody>
+
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
