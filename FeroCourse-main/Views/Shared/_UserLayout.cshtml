@@ -1,0 +1,69 @@
+﻿@using FeroCourse.Data.Entities
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FiroCourse</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/userlayout.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FeroCourse.styles.css" asp-append-version="true" />
+
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg py-3">
+        <div class="container">
+            <a class="navbar-brand fs-3 fw-bold" href="@Url.Action("Index", "Home")">Firo<span>Course</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item"><a class="nav-link fw-semibold text-secondary" href="@Url.Action("Index", "Dashboard")">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link fw-semibold text-secondary" href="@Url.Action("Courses", "Dashboard")">Courses</a></li>
+                        <li class="nav-item"><a class="nav-link fw-semibold text-secondary" asp-action="Index" asp-controller="Profile" asp-area="User">Profile</a></li>
+                        <li class="nav-item ms-lg-3">
+                            <form method="post" asp-area="" asp-controller="Home" asp-action="Logout">
+                                <button type="submit" class="btn btn-main">Logout</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a class="nav-link fw-semibold text-secondary" href="@Url.Page("/Account/Login", new { area = "Identity" })">Login</a></li>
+                        <li class="nav-item ms-lg-3"><a class="btn btn-main" href="@Url.Page("/Account/Register", new { area = "Identity" })">Register</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Body -->
+    <main>
+        <section class="container py-5">
+            @RenderBody()
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light mt-auto">
+        <div class="container text-center py-3">
+            <p class="mb-0 fw-semibold">© 2025 FiroCourse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

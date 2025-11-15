@@ -1,0 +1,57 @@
+﻿@{
+	ViewData["Title"] = "Category";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@model IEnumerable<FeroCourse.Data.ViewModels.CategoryVM>
+
+<div class="row">
+	<div class="col-sm-12">
+		<div class="card">
+			<div class="card-header">
+				<h5>Category Create</h5>
+			</div>
+			<div class="card-body table-border-style">
+				<form  asp-area="Admin" asp-action="CategoryCreate" asp-controller="Category" method="post">
+					<div class="row mb-3">
+						<div class="col-md-4">
+							<div class="form-group">
+								 <label class="floating-label" for="CategoryName">Category Name</label>
+                                 <input type="text" class="form-control" id="CategoryName" name="CategoryName">
+
+							</div>
+
+						</div>
+
+						<div class="col-md-4">
+							<div class="form-group">
+								 <label class="floating-label" for="CategoryDescription">Category Description</label>
+                                 <input type="text" class="form-control" id="CategoryDescription" name="CategoryDescription">
+
+							</div>
+
+
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								 <label class="floating-label" for="CategoryIsActive">Category Name</label>
+                                 <select class="form-control" id="CategoryIsActive" name="CategoryIsActive">
+									 <option value="true">Active</option>
+									 <option value="false">Inactive</option>
+								 </select>
+							</div>
+
+
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="floating-label"></label>
+								<button type="submit" class="btn btn-primary">Create Category</button>
+							</div>
+						</div>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

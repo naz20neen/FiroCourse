@@ -1,0 +1,95 @@
+﻿@using FeroCourse.Areas.Admin.ViewModels
+@{
+	ViewData["Title"] = "Assign Role";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+	int sl = 1;
+
+}
+@model List<UserRoleVM>
+
+
+<div class="row">
+	<div class="col-sm-12">
+		<div class="card">
+			<div class="card-header">
+				<h5>Role Create</h5>
+			</div>
+			<div class="card-body">
+				<form asp-area="Admin" asp-action="RoleAssignSubmit" asp-controller="Role" method="post">
+					<div class="row mb-3">
+						<div class="col-md-4">
+							@Html.DropDownList(
+									"userId",
+														(IEnumerable<SelectListItem>)ViewBag.UserDropDown,
+														"Select User",
+														new { @class = "form-select form-control" }
+														)
+
+						</div>
+
+						<div class="col-md-4">
+							@Html.DropDownList("RoleName",
+														(IEnumerable<SelectListItem>)ViewBag.RolesDropDown,
+														"Select User",
+														new { @class = "form-select form-control" }
+
+														)
+
+
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label class="floating-label"></label>
+								<button type="submit" class="btn btn-primary">Assign Role</button>
+							</div>
+						</div>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<div class="col-md-12">
+	<div class="card">
+		<div class="card-header">
+			<h5>User List</h5>
+
+		</div>
+		<div class="card-body table-border-style">
+			<div class="table-responsive">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Email</th>
+							<th>PhoneNumber</th>
+							<th>Role</th>
+						</tr>
+					</thead>
+					<tbody>
+
+						@foreach (var item in Model)
+						{
+							<tr>
+								<td>@sl</td>
+								<td>@item.Email</td>
+								<td>@item.PhoneNumber</td>
+								<td>@item.Role</td>
+
+							</tr>
+
+							sl++;
+
+						}
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

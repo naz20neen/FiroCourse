@@ -1,0 +1,65 @@
+﻿@model FeroCourse.Data.Dtos.UserProfileVM
+
+@{
+	ViewData["Title"] = "Profile";
+	Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container mt-5">
+
+ 
+
+
+
+    <div class="row">
+        <!-- Profile Info -->
+        <div class="col-md-4">
+            <div class="card text-center">
+                @if (TempData["Message"] != null)
+                {
+                    <div class="alert @TempData["Icon"] alert-dismissible fade show" role="alert">
+                        @TempData["Message"]
+                    </div>
+                }
+                <div class="card-body">
+                    <img src="~/@Model.ProfilePicturePath"
+                         class="rounded-circle mx-auto d-block mb-3"
+                         alt="Profile Picture"
+                         style="width:150px; height:150px; object-fit:cover;">
+
+                    <h5>@Model.Name</h5>
+                    <p>@Model.Email</p>
+                    <a asp-area="Identity" asp-page="/Account/Manage/ChangePassword" class="btn btn-warning btn-sm">Change Password</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Profile Update Form -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Update Profile</div>
+                <div class="card-body">
+                    <form asp-action="UpdateProfile" asp-controller="Profile" asp-area="User" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" asp-for="Name">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" asp-for="PhoneNumber">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Profile Picture</label>
+                            <input type="file" class="form-control" asp-for="ProfileImage">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

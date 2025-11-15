@@ -1,0 +1,85 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="auth-section d-flex align-items-center justify-content-center">
+    <div class="auth-box shadow rounded-4 p-4 p-md-5 bg-white" style="max-width: 450px; width: 100%;">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold text-dark mb-2">Create Your Account</h3>
+            <p class="text-secondary mb-0">Join FiroCourse and start learning today</p>
+        </div>
+
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="name@example.com" required />
+                <label asp-for="Input.Email">Email address</label>
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" type="password" class="form-control" autocomplete="new-password" placeholder="password" required />
+                <label asp-for="Input.Password">Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger small"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.ConfirmPassword" type="password" class="form-control" autocomplete="new-password" placeholder="Confirm password" required />
+                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+            </div>
+
+            <button id="registerSubmit" type="submit" class="btn btn-main w-100 py-2 fw-semibold">Register</button>
+
+            <div class="text-center mt-3">
+                <p class="small mb-0">
+                    Already have an account?
+                    <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="text-main fw-semibold">Login</a>
+                </p>
+            </div>
+
+            @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+            {
+                <hr class="my-4" />
+                <div class="text-center mb-2 small text-muted">Or sign up with</div>
+                <div class="d-flex justify-content-center gap-2">
+                    @foreach (var provider in Model.ExternalLogins!)
+                    {
+                        <button type="submit" class="btn btn-outline-secondary btn-sm px-3" name="provider" value="@provider.Name">
+                            <i class="bi bi-@provider.Name.ToLower() me-1"></i> @provider.DisplayName
+                        </button>
+                    }
+                </div>
+            }
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    .auth-section {
+        min-height: calc(100vh - 120px);
+        background: #f8f9fa;
+    }
+
+    .auth-box .btn-main {
+        background: var(--main-color, #007bff);
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+        .auth-box .btn-main:hover {
+            background: #0056b3;
+        }
+
+    .text-main {
+        color: var(--main-color, #007bff);
+    }
+</style>

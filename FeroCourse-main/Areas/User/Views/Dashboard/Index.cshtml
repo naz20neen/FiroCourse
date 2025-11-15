@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<!-- Main Dashboard -->
+
+<div class="row g-4">
+    <!-- My Courses -->
+    <div class="col-lg-8">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h5>ASP.NET Core MVC</h5>
+                    <div class="progress mb-2">
+                        <div class="progress-bar" style="width: 45%;">45%</div>
+                    </div>
+                    <p class="course-progress">12 Classes | 120 Students</p>
+                    <a href="#" class="btn btn-main w-100 btn-sm">Continue Learning</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h5>JavaScript Fundamentals</h5>
+                    <div class="progress mb-2">
+                        <div class="progress-bar" style="width: 75%;">75%</div>
+                    </div>
+                    <p class="course-progress">15 Classes | 200 Students</p>
+                    <a href="#" class="btn btn-main w-100 btn-sm">Continue Learning</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="mt-5">
+            <h4>Recent Activity & Notifications</h4>
+            <div class="notification-card">
+                <strong>Instructor:</strong> John Doe <small class="text-muted">1 hour ago</small>
+                <p>New lecture uploaded: Routing in ASP.NET Core MVC</p>
+            </div>
+            <div class="notification-card">
+                <strong>FiroCourse:</strong> <small class="text-muted">2 hours ago</small>
+                <p>Assignment 2 deadline is tomorrow!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Upcoming Classes -->
+        <div class="dashboard-card mb-4">
+            <h5>Upcoming Classes</h5>
+            <div class="upcoming-class mb-2">
+                <strong>Lecture 5:</strong> Entity Framework Core <br>
+                <small>Tomorrow, 10:00 AM</small>
+            </div>
+            <div class="upcoming-class mb-2">
+                <strong>Lecture 6:</strong> Authentication & Identity <br>
+                <small>Next Week, 2:00 PM</small>
+            </div>
+        </div>
+
+        <!-- Profile Summary -->
+        <div class="dashboard-card text-center">
+            <img src="~/assets/images/user/avatar-2.jpg" alt="Profile" class="rounded-circle mb-3" width="100">
+            <h5>John Doe</h5>
+            <p class="text-muted">Enrolled Courses: 3</p>
+            <p class="text-muted">Completed: 1</p>
+            <a asp-action="Index" asp-controller="Profile" asp-area="User" class="btn btn-main btn-sm">Edit Profile</a>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-card mt-3 text-center">
+            <h5>Quick Actions</h5>
+            <a href="#" class="btn btn-main w-100 mb-2">Browse Courses</a>
+            <a href="#" class="btn btn-main w-100">View Certificates</a>
+        </div>
+    </div>
+</div>
+

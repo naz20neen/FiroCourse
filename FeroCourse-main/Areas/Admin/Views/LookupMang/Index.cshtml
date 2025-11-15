@@ -1,0 +1,128 @@
+﻿@model FeroCourse.Data.Dtos.LookupVM
+@{
+    ViewData["Title"] = "Lookup";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int sl = 1;
+    var lookuplist = ViewData["LookList"] as List<FeroCourse.Data.Dtos.LookupVM>;
+
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Add / Edit Lookup</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="LookupSave" asp-controller="LookupMang" asp-area="Admin" method="post">
+                    <div class="row">
+                        <!-- Category -->
+                        <div class="col-sm-4 mb-4">
+                            <div class="form-group">
+                                <label class="floating-label" for="Category">Category</label>
+                                <input asp-for="Category" class="form-control" id="Category" placeholder="e.g., Contact, Dropdown, Settings" />
+
+                            </div>
+                        </div>
+
+                        <!-- Key -->
+                        <div class="col-sm-4 mb-4">
+                            <div class="form-group">
+                                <label class="floating-label" for="Key">Key</label>
+                                <input asp-for="Key" class="form-control" id="Key" placeholder="e.g., GoogleMap, Address, Gender" />
+
+                            </div>
+                        </div>
+
+                        <!-- Value -->
+                        <div class="col-sm-4 mb-4">
+                            <div class="form-group">
+                                <label class="floating-label" for="Value">Value</label>
+                                <input asp-for="Value" class="form-control" id="Value" placeholder="Enter value here" />
+
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="floating-label" for="Description">Description</label>
+                                <input asp-for="Description" class="form-control" id="Description" rows="2" placeholder="Optional description...">
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-save"></i> Save </button>
+                        <button type="reset" class="btn btn-secondary px-4">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Lookup Table</h5>
+            </div>
+            <div class="card-body table-border-style">
+                <div class="table-responsive"> 
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width:5%">#</th>
+                                <th style="width:20%">Category</th>
+                                <th style="width:20%">Key</th>
+                                <th style="width:10%">Value</th>
+                                <th style="width:10%">Description</th>
+                                <th style="width:10%">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @{
+                                if (lookuplist != null)
+                                {
+                                    foreach (var item in lookuplist)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@sl</td>
+                                            <td>@item.Category</td>
+                                            <td>@item.Key</td>
+                                            <td class="text-wrap">
+                                              
+                                                    @item.Value
+                                              
+                                            </td>
+                                            <td class="text-wrap">@item.Description</td>
+                                            <td class="text-center">
+                                                <a asp-route-id="@item.Id" asp-action="Lookupdelete" asp-controller="LookupMang" asp-area="Admin" type="button" class="btn  btn-icon btn-danger"><i class="feather icon-trash"></i></a>
+                                            </td>
+                                        </tr>
+                                        sl++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center"> No Data Found</td>
+                                    </tr>
+                                }
+
+
+                            }
+
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

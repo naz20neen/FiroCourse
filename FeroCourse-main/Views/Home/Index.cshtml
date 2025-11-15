@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<partial name="~/Views/Shared/LandingPage.cshtml" />
+<section class="courses">
+    <div class="container text-center">
+        <h2 class="mb-5 fw-bold">Popular Courses</h2>
+        <div class="row g-4">
+            @for (int i = 1; i < 4; i++)
+            {
+
+                <div class="col-md-4">
+                    <div class="course-card">
+                        <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296" alt="ASP.NET Core MVC">
+                        <div class="p-3">
+                            <h5>ASP.NET Core MVC</h5>
+                            <p>Build dynamic, modern web applications using ASP.NET Core MVC framework.</p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="price">
+                                    ৳2000 <span class="old-price">৳2500</span>
+                                </div>
+                                <a href="#" class="btn btn-main btn-sm">Enroll Now</a>
+                            </div>
+                            <hr class="my-2">
+                            <div class="d-flex justify-content-between text-secondary small">
+                                <div><i class="bi bi-book"></i> 12 Classes</div>
+                                <div><i class="bi bi-people"></i> 120 Students</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- More course cards can be added here -->
+            }
+        </div>
+    </div>
+</section>
