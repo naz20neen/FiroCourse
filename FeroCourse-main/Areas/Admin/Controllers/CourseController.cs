@@ -71,7 +71,7 @@ namespace FeroCourse.Areas.Admin.Controllers
 
             _dbcontext.Courses.Add(data);
             _dbcontext.SaveChanges();
-            return View(vm);
+            return RedirectToAction("Courselist");
         }
 
         
@@ -80,6 +80,7 @@ namespace FeroCourse.Areas.Admin.Controllers
 
             var data = _dbcontext.Courses.Select(x => new CourseVM
             {
+                CourseId=x.CourseId,
                 Title = x.Title,
                 Description = x.Description,
                 InstructorName = x.InstructorName,
@@ -91,7 +92,92 @@ namespace FeroCourse.Areas.Admin.Controllers
             return View(data);
         }
 
+        [HttpGet]
+        public IActionResult GetCourse(int id)
+        {
+            var data = _dbcontext.Courses
+                    .Where(x => x.CourseId == id)
+                    .Select(x => new CourseVM
+                    {
+                        CourseId = x.CourseId,
+                        Title = x.Title,
+                        Description = x.Description,
+                        InstructorName = x.InstructorName,
+                        Price = x.Price,
+                        DiscountPrice = x.DiscountPrice,
 
+                    }).FirstOrDefault();
+
+            if (data == null)
+                return NotFound();
+
+            return Json(data);
+
+
+        }
+
+
+        [HttpPost]
+        public IActionResult CourseEdit(CourseVM viewmodel)
+        {
+
+            var data = new Course();
+
+            data.CourseId = viewmodel.CourseId;
+            data.Title = viewmodel.Title;
+            data.InstructorName = viewmodel.InstructorName;
+            data.Description = viewmodel.Description;
+            data.Price = viewmodel.Price;
+            data.DiscountPrice = viewmodel.DiscountPrice;
+
+
+            _dbcontext.Courses.Update(data);
+            _dbcontext.SaveChanges();
+            return Json("");
+        }
+
+        [HttpPost]
+        public IActionResult CourseDelete(int id)
+        {
+            if (id == 0)
+            {
+                return Json("Course not valid");
+            }
+            var checkdata = _dbcontext.Courses.Where(x => x.CourseId == id).FirstOrDefault();
+            if (checkdata != null)
+            {
+                _dbcontext.Remove(checkdata);
+                _dbcontext.SaveChanges();
+                return Ok();
+            }
+
+            return BadRequest();
+
+        }
+
+        [HttpGet]
+
+        public IActionResult CourseDetails(int id)
+        {
+            var data = _dbcontext.Courses
+                .Where(x => x.CourseId == id)
+                .Select(x => new CourseVM
+                {
+
+                    CourseId = x.CourseId,
+                    Title = x.Title,
+                    Description = x.Description,
+                    InstructorName = x.InstructorName,
+                    Price = x.Price,
+                    DiscountPrice = x.DiscountPrice,
+
+
+
+                }).FirstOrDefault();
+            if (data == null)
+                return NotFound();
+            return View(data);
+        }
     }
 
 }

@@ -46,7 +46,7 @@ namespace FeroCourse.Areas.Admin.Controllers
 
             _dbcontext.Categorys.Add(data);
             _dbcontext.SaveChanges();
-            return View();
+            return RedirectToAction("CategoryCreate");
         }
 
         [HttpGet]
@@ -72,22 +72,20 @@ namespace FeroCourse.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CategoryEdit(CategoryVM viewmodel)
+        public IActionResult CategoryEdit(CategoryVM viewmodel)
         {
 
             var data = new Category();
 
+            data.CategoryId = viewmodel.CategoryId;
             data.CategoryName = viewmodel.CategoryName;
-
             data.CategoryDescription = viewmodel.CategoryDescription;
             data.CategoryIsActive = viewmodel.CategoryIsActive;
 
-
-
-
-            _dbcontext.Categorys.Add(data);
+            _dbcontext.Categorys.Update(data);
             _dbcontext.SaveChanges();
-            return View();
+
+            return Json("");
         }
 
         [HttpPost]
@@ -102,7 +100,7 @@ namespace FeroCourse.Areas.Admin.Controllers
             {
                 _dbcontext.Remove(checkdata);
                 _dbcontext.SaveChanges();
-                return Ok();
+                return Json("Deleted");
             }
 
             return BadRequest();

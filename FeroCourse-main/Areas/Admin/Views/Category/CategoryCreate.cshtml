@@ -33,7 +33,7 @@
 						</div>
 						<div class="col-md-4">
 							<div class="form-group">
-								<label class="floating-label" for="CategoryIsActive">Category Name</label>
+								<label class="floating-label" for="CategoryIsActive">Status</label>
 								<select class="form-control" id="CategoryIsActive" name="CategoryIsActive">
 									<option value="true">Active</option>
 									<option value="false">Inactive</option>
@@ -94,7 +94,7 @@
 											<button type="button" class="btn btn-danger btn-sm btn-dlt" data-id="@item.CategoryId">
 												Delete
 											</button>
-											
+
 
 										</div>
 									</td>
@@ -156,108 +156,106 @@
 	</div>
 </div>
 
-@section Scripts {
+@section Scripts
+{
+	<script>
 
-		<script>
-			 $(document).on('click', '.btn-edit', function () {
+		// Open Edit Modal & Load Data
+		$(document).on("click", ".btn-edit", function () {
 
-				 var id = $(this).data("id");
+		  var id = $(this).data("id");
 
-						 $.ajax({
-					 url: "/Admin/Category/GetCategory/" + id,
-					 type: 'GET',
-					 success: function(responce)
-					 {
-						 console.log(responce);
+			  $.ajax({
+				  url: "/Admin/Category/GetCategory/" + id,
+				  type: 'GET',
+				  success: function(responce)
+				  {
+					  console.log(responce);
 
-						$("#EditCategoryId").val(responce.categoryId);
-						$("#EditCategoryName").val(responce.categoryName);
-						$("#EditCategoryDescription").val(responce.categoryDescription);
-						$("#EditCategoryIsActive").val(responce.categoryIsActive.toString());
+					  $("#EditCategoryId").val(responce.categoryId);
+					  $("#EditCategoryName").val(responce.categoryName);
+					  $("#EditCategoryDescription").val(responce.categoryDescription);
+					  $("#EditCategoryIsActive").val(responce.categoryIsActive.toString());
 
-						$("#EditCreatedAt").val(responce.CreatedAt);
-						$("#EditCreatedBy").val(responce.CreatedBy);
+					  $("#editCategoryModal").modal("show");
+				  },
+				  error: function()
+				  {
+					  alert("Not success.");
+				  }
+			  })
 
-						 $("#editCategoryModal").modal("show");
-					 },
-					 error: function()
-					 {
-						 alert("Not success.");
-					 }
-				 })
+		});
 
+		  // Close Edit Modal when Cancle Button Clicked
+		  $(document).on("click", "#btnCancelEdit", function(){
+			  $("#editCategoryModal").modal("hide");
+		  })
 
-			 });
+		  // Edit Data
+		  $(document).on("click", "#btnSaveEdit", function(){
 
-			 // Close Edit Modal when Cancle Button Clicked
-			 $(document).on("click", "#btnCancelEdit", function(){
-				 $("#editCategoryModal").modal("hide");
-			});
+			  var modaldata = {
+				  categoryId : $('#EditCategoryId').val(),
+				  categoryName : $('#EditCategoryName').val(),
+				  categoryDescription : $('#EditCategoryDescription').val(),
+				  categoryIsActive : $('#EditCategoryIsActive').val()
+			  };
 
-				$(document).on("click", "#btnSaveEdit", function(){
+			  console.log(modaldata);
 
-					var modaldata = {
-						categoryId : $('#EditCategoryId').val(),
-						categoryName : $('#EditCategoryName').val(),
-						categoryDescription : $('#EditCategoryDescription').val(),
-						categoryIsActive : $('#EditCategoryIsActive').val(),
+			  $.ajax({
+				  url: "/Admin/Category/CategoryEdit",
+				  type: 'POST',
+				  data: modaldata,
+				  success: function(responce)
+				  {
+					  window.location.href = '/Admin/Category/CategoryCreate';
+				  },
+				  error: function()
+				  {
+					  alert("Not Updated.");
+				  }
+			  })
+		  });
 
-						CreatedAt : $('#EditCreatedAt').val(),
-						CreatedBy : $('#EditCreatedBy').val()
-					};
-				});
+		  // Delete Data
+		  $(document).on("click", ".btn-dlt", function(){
 
-		</script>
-		<script>
-		$(document).on('click', '.btn-dlt', function () {				
+			  Swal.fire({
+				  title: "Are you sure?",
+				  text: "You won't be able to revert this!",
+				  icon: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#3085d6",
+				  cancelButtonColor: "#d33",
+				  confirmButtonText: "Yes, delete it!"
+			  }).then((result) => {
+				  if (result.isConfirmed) {
 
-				var CategoryId = $(this).data('id');
+					  var id = $(this).data("id");
 
-				var row = $(this).closest('tr');
+					  var row = $(this).closest('tr');
 
-				console.log(row);
+					  $.ajax({
+						  url: "/Admin/Category/CategoryDelete/" + id,
+						  type: 'POST',
+						  success: function(responce)
+						  {
+								row.remove();		  
+						  },
+						  error: function()
+						  {
+							  alert("Not success.");
+						  }
+					  })
+				  }
+			  });
 
-				Swal.fire({
-					title: "Are you sure?",
-					text: "You won't be able to revert this!",
-					icon: "warning",
-					showCancelButton: true,
-					confirmButtonColor: "#3085d6",
-					cancelButtonColor: "#d33",
-					confirmButtonText: "Yes, delete it!"
-				}).then((result) => {
-					if (result.isConfirmed) {
+		  })
 
-						$.ajax({
-							url: '/Admin/Category/CategoryDelete/' +CategoryId ,
-							type: 'POST',
-							success: function () {
-								Swal.fire({
-									title: "Deleted!",
-									text: "Data has been deleted.",
-									icon: "success"
-								});
-
-								row.remove();
-							},
-							error: function () {
-								console.log("Error occurred while deleting.");
-							}
-						});
-					}
-				});
-			});
-		</script>
+	</script>
 
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-	@* <script>
-		$(document).ready(function(){
-		 $(".nazneen").DataTable({
-		   "responsive": true, "lengthChange": false, "autoWidth": false,
-		   "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-		 }).buttons().container().appendTo('.col-md-6:eq(0)');
-		 }).buttons().container().appendTo('.col-md-6:eq(0)');
-		});
-	</script> *@
 }
+

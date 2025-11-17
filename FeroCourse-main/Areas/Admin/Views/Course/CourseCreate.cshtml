@@ -13,11 +13,7 @@
         </div>
 
         <div class="card-body table-border-style">
-            <form asp-area="Admin"
-                  asp-action="CourseCreate"
-                  asp-controller="Course"
-                  method="post"
-                  enctype="multipart/form-data">
+			<form asp-area="Admin" asp-controller="Course" asp-action="CourseCreate" method="post" enctype="multipart/form-data">
 
                 <div class="row mb-3">
                     <div class="col-md-12">
@@ -49,10 +45,10 @@
                         <label>Category</label>
                         @Html.DropDownList(
                         "CategoryId",
-                                                (IEnumerable<SelectListItem>)ViewBag.CategoryDropDown,
-                                                "Select Category",
-                                                new { @class = "form-select form-control" }
-                                                )
+                            (IEnumerable<SelectListItem>)ViewBag.CategoryDropDown,
+                            "Select Category",
+                            new { @class = "form-select form-control" }
+                            )
                     </div>
                 </div>
 
