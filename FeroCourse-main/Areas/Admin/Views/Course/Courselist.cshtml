@@ -1,263 +1,325 @@
 ﻿@{
-	ViewData["Title"] = "Course List";
-	Layout = "~/Views/Shared/_AdminLayout.cshtml";
-
+    ViewData["Title"] = "Course List";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 @model IEnumerable<FeroCourse.Data.Dtos.CourseVM>
 
-
-
 <div class="col-md-12">
-	<div class="card">
-		<div class="card-header">
-			<h5>Course List</h5>
+    <div class="card">
+        <div class="card-header">
+            <h5>Course List</h5>
+        </div>
+        <div class="card-body table-border-style">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Course Title</th>
+                            <th>Instructor Name</th>
+                            <th>Price</th>
+                            <th>Discount Price</th>
+                            <th>Image</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.InstructorName</td>
+                                <td>@item.Price</td>
+                                <td>@item.DiscountPrice</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ThumbnailPath))
+                                    {
+                                        <img src="~/@item.ThumbnailPath" class="img-fluid img-thumbnail" width="70" height="90" />
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <a class="btn btn-warning btn-sm"
+                                           asp-controller="CourseClass"
+                                           asp-action="CourseClassCreate"
+                                           asp-route-id="@item.CourseId">Add Class</a>
 
-		</div>
-		<div class="card-body table-border-style">
-			<div class="table-responsive">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>Course Title</th>
-							<th>Instructor Name</th>
-							<th>Price</th>
-							<th>Discount Price</th>
-							<th>Image</th>
-							<th>Action</th>
-						</tr>
-					</thead>
-					<tbody>
-						@{
-							foreach (var item in Model)
-							{
-								<tr>
+                                        <button type="button" class="btn btn-primary btn-sm btn-view"
+                                                data-id="@item.CourseId">
+                                            Details
+                                        </button>
 
-									<td>@item.Title </td>
-									<td>@item.InstructorName </td>
-									<td>@item.Price </td>
-									<td>@item.DiscountPrice </td>
-									<td>
-										@if (!string.IsNullOrEmpty(item.ThumbnailPath))
-										{
-											<img src="~/@item.ThumbnailPath" class="img-fluid img-thumbnail" width="70" height="90" />
-										}
-									</td>
+                                        <button type="button" class="btn btn-success btn-sm btn-edit"
+                                                data-id="@item.CourseId">
+                                            Edit
+                                        </button>
 
-									<td>
-										<div class="d-flex justify-content-around-content-center gap-2">
-
-											<button type="button" class="btn btn-primary btn-sm btn-detail" data-id="@item.CourseId">
-												Details
-											</button>
-											<button type="button" class="btn btn-success btn-sm btn-edit" data-id="@item.CourseId">
-												Edit
-											</button>
-											<button type="button" class="btn btn-danger btn-sm btn-dlt" data-id="@item.CourseId">
-												Delete
-											</button>
-
-
-										</div>
-									</td>
-								</tr>
-
-							}
-
-						}
-
-					</tbody>
-
-				</table>
-			</div>
-		</div>
-	</div>
+                                        <button type="button" class="btn btn-danger btn-sm btn-dlt"
+                                                data-id="@item.CourseId">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-
-
+<!-- ============================= -->
+<!-- EDIT COURSE MODAL -->
+<!-- ============================= -->
 <div class="modal fade" id="editCourseModal" tabindex="-1">
-	<div class="modal-dialog">
-		<div class="modal-content">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Course</h5>
+            </div>
+            <div class="modal-body">
+                <form id="editCourseForm">
+                    <input type="hidden" id="EditCourseId" name="CourseId">
 
-			<div class="modal-header">
-				<h5 class="modal-title">Edit Course</h5>
-			</div>
+                    <div class="mb-3">
+                        <label>Course Title</label>
+                        <input type="text" id="EditCourseTitle" name="Title" class="form-control">
+                    </div>
 
-			<div class="modal-body">
-				<form id="editCourseForm">
-					<input type="hidden" id="EditCourseId" name="CourseId">
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <input type="text" id="EditCourseDescription" name="Description" class="form-control">
+                    </div>
 
-					<div class="mb-3">
-						<label>Course Title</label>
-						<input type="text" id="EditCourseTitle" name="Title" class="form-control">
-					</div>
+                    <div class="mb-3">
+                        <label>Instructor Name</label>
+                        <input type="text" id="EditInstructorName" name="InstructorName" class="form-control">
+                    </div>
 
-					<div class="mb-3">
-						<label>Description</label>
-						<input type="text" id="EditCourseDescription" name="Description" class="form-control">
-					</div>
+                    <div class="mb-3">
+                        <label>Price</label>
+                        <input type="text" id="EditPrice" name="Price" class="form-control">
+                    </div>
 
+                    <div class="mb-3">
+                        <label>Discount Price</label>
+                        <input type="text" id="EditDiscountPrice" name="DiscountPrice" class="form-control">
+                    </div>
 
-					<div class="mb-3">
-						<label>Instructor Name</label>
-						<input type="text" id="EditInstructorName" name="InstructorName" class="form-control">
-					</div>
+                    <div class="mb-3">
+                        <label for="EditImage">Upload Image</label>
+                        <input type="file" class="form-control" id="EditImage" name="Imagefile" />
+                        <img id="EditImagePreview" src="" alt="Image Preview"
+                             class="img-fluid mt-2" style="max-height:150px; display:none;" />
+                    </div>
+                </form>
+            </div>
 
-					<div class="mb-3">
-						<label>Price</label>
-						<input type="text" id="EditPrice" name="Price" class="form-control">
-					</div>
-
-					<div class="mb-3">
-						<label>Discount Price</label>
-						<input type="text" id="EditDiscountPrice" name="DiscountPrice" class="form-control">
-					</div>
-
-				</form>
-			</div>
-
-			<div class="modal-footer">
-				<button class="btn btn-primary" id="btnSaveEdit">Save Changes</button>
-				<button class="btn btn-secondary" id="btnCancelEdit">Cancel</button>
-			</div>
-
-		</div>
-	</div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnSaveEdit">Save Changes</button>
+                <button class="btn btn-secondary" id="btnCancelEdit">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="modal fade" id="editCourseModal" tabindex="-1">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Course Details</h5>
-			</div>
+<!-- ============================= -->
+<!-- DETAILS MODAL -->
+<!-- ============================= -->
+<div class="modal fade" id="CourseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Course Details</h5>
+            </div>
 
-			<div class="modal-body">
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tr><th>Field</th><th>Details</th></tr>
+                    <tr><td>Course ID</td><td id="CourseID"></td></tr>
+                    <tr><td>Course Title</td><td id="CourseTitle"></td></tr>
+                    <tr><td>Course Details</td><td id="CourseDetails"></td></tr>
+                    <tr><td>Instructor Name</td><td id="InstructorName"></td></tr>
+                    <tr><td>Price</td><td id="Price"></td></tr>
+                    <tr><td>Discount Price</td><td id="DiscountPrice"></td></tr>
+                    <tr>
+                        <td>Image</td>
+                        <td><img id="CourseImage" src="" style="width:120px; height:auto; border:1px solid #ddd;"></td>
+                    </tr>
+                </table>
+            </div>
 
-				<table>
-					<tr>
-						<td id="CourseID"></td>
-						<td id="CourseTitle"></td>
-						<td id="CourseDetails"></td>
-						<td id="Instructor"></td>
-					</tr>
-				</table>
-
-
-			</div>
-
-			<div class="modal-footer">
-				<button class="btn btn-primary" id="btnBack">Back</button>
-
-			</div>
-		</div>
-	</div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnBack">Back</button>
+            </div>
+        </div>
+    </div>
 </div>
-@section Scripts
-{
-	<script>
 
-		// Open Edit Modal & Load Data
-		$(document).on("click", ".btn-edit", function () {
+<!-- ============================= -->
+<!-- JAVASCRIPT -->
+<!-- ============================= -->
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-		  var id = $(this).data("id");
+    <script>
+
+        // =========================
+        // LOAD COURSE IN EDIT MODAL
+        // =========================
+        $(document).on("click", ".btn-edit", function () {
+
+            var id = $(this).data("id");
+
+            $.ajax({
+                url: "/Admin/Course/GetCourse/" + id,
+                type: 'GET',
+                success: function (res) {
+
+                    $("#EditCourseId").val(res.courseId);
+                    $("#EditCourseTitle").val(res.title);
+                    $("#EditCourseDescription").val(res.description);
+                    $("#EditInstructorName").val(res.instructorName);
+                    $("#EditPrice").val(res.price);
+                    $("#EditDiscountPrice").val(res.discountPrice);
+
+                    $("#EditImage").val("");
+                    $("#EditImagePreview").hide();
+
+                    $("#editCourseModal").modal("show");
+                },
+                error: function () {
+                    alert("Failed to load course data.");
+                }
+            });
+        });
+
+        // Preview Image
+        $("#EditImage").on("change", function () {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $("#EditImagePreview").attr("src", e.target.result).show();
+            };
+
+            reader.readAsDataURL(this.files[0]);
+        });
+
+        // Cancel Edit
+        $("#btnCancelEdit").click(function () {
+            $("#editCourseModal").modal("hide");
+        });
+
+        // =========================
+        // SAVE EDIT
+        // =========================
+        $("#btnSaveEdit").click(function () {
+
+            var formData = new FormData();
+
+            formData.append("CourseId", $("#EditCourseId").val());
+            formData.append("Title", $("#EditCourseTitle").val());
+            formData.append("Description", $("#EditCourseDescription").val());
+            formData.append("InstructorName", $("#EditInstructorName").val());
+            formData.append("Price", $("#EditPrice").val());
+            formData.append("DiscountPrice", $("#EditDiscountPrice").val());
+
+            var imageFile = $("#EditImage")[0].files[0];
+            if (imageFile) formData.append("Imagefile", imageFile);
+
+            $.ajax({
+                url: "/Admin/Course/CourseEditAsync",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+
+                success: function () {
+                    $("#editCourseModal").modal("hide");
+                    window.location.href = "/Admin/Course/CourseList";
+                },
+
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                    alert("Not Updated. Check console for errors.");
+                }
+            });
+        });
 
 
-			  $.ajax({
-				  url: "/Admin/Course/GetCourse/" + id,
-				  type: 'GET',
-				  success: function(responce)
-				  {
-					  console.log(responce);
-					 
-					  $("#EditCourseId").val(responce.courseId);
-					  $("#EditCourseTitle").val(responce.title);
-					  $("#EditCourseDescription").val(responce.description);
-					  $("#EditInstructorName").val(responce.instructorName);
-					  $("#EditPrice").val(responce.price);
-					  $("#EditDiscountPrice").val(responce.discountPrice);
+        // =========================
+        // DELETE COURSE
+        // =========================
+        $(document).on("click", ".btn-dlt", function () {
 
-					  $("#editCourseModal").modal("show");
-				  },
-				  error: function()
-				  {
-					  alert("Not success.");
-				  }
-			  })
+            var id = $(this).data("id");
+            var row = $(this).closest('tr');
 
-		});
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This action cannot be undone!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            })
+            .then((result) => {
 
-		  // Close Edit Modal when Cancle Button Clicked
-		  $(document).on("click", "#btnCancelEdit", function(){
-			  $("#editCourseModal").modal("hide");
-		  })
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/Admin/Course/CourseDelete/" + id,
+                        type: "POST",
+                        success: function () {
+                            row.remove();
+                        },
+                        error: function () {
+                            alert("Delete failed.");
+                        }
+                    });
+                }
 
-		  // Edit Data
-		  $(document).on("click", "#btnSaveEdit", function(){
+            });
+        });
 
-			  var modaldata = {
-				  courseId       : $('#EditCourseId').val(),
-				  title			 : $('#EditCourseTitle').val(),
-				  description    : $('#EditCourseDescription').val(),
-				  instructorName : $('#EditInstructorName').val(),
-				  price          : $('#EditPrice').val(),
-				  discountPrice  : $('#EditDiscountPrice').val(),
-			  };
 
-			  console.log(modaldata);
+        // =========================
+        // VIEW DETAILS
+        // =========================
+        $(document).on("click", ".btn-view", function () {
 
-			  $.ajax({
-				  url: "/Admin/Course/CourseEdit",
-				  type: 'POST',
-				  data: modaldata,
-				  success: function(responce)
-				  {
-					  window.location.href = '/Admin/Course/Courselist';
-				  },
-				  error: function()
-				  {
-					  alert("Not Updated.");
-				  }
-			  })
-		  });
+            var id = $(this).data("id");
 
-		  // Delete Data
-		  $(document).on("click", ".btn-dlt", function(){
+            $.ajax({
+                url: "/Admin/Course/GetCourse/" + id,
+                type: "GET",
 
-			  Swal.fire({
-				  title: "Are you sure?",
-				  text: "You won't be able to revert this!",
-				  icon: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#3085d6",
-				  cancelButtonColor: "#d33",
-				  confirmButtonText: "Yes, delete it!"
-			  }).then((result) => {
-				  if (result.isConfirmed) {
+                success: function (res) {
 
-					  var id = $(this).data("id");					  
+                    $("#CourseID").text(res.courseId);
+                    $("#CourseTitle").text(res.title);
+                    $("#CourseDetails").text(res.description);
+                    $("#InstructorName").text(res.instructorName);
+                    $("#Price").text(res.price);
+                    $("#DiscountPrice").text(res.discountPrice);
 
-					  var row = $(this).closest('tr');
+                    $("#CourseImage").attr("src",
+                        res.thumbnailPath.startsWith("/")
+                        ? res.thumbnailPath
+                        : "/" + res.thumbnailPath
+                    );
 
-					  $.ajax({
-						  url: "/Admin/Course/CourseDelete/" + id,
-						  type: 'POST',
-						  success: function(responce)
-						  {
-								row.remove();
-						  },
-						  error: function()
-						  {
-							  alert("Not success.");
-						  }
-					  })
-				  }
-			  });
+                    $("#CourseModal").modal("show");
+                },
+                error: function () {
+                    alert("Something went wrong!");
+                }
+            });
+        });
 
-		  })
+        $("#btnBack").click(function () {
+            $("#CourseModal").modal("hide");
+        });
 
-	</script>
-
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </script>
 }

@@ -1,187 +1,170 @@
 ﻿using FeroCourse.Data;
 using FeroCourse.Data.Dtos;
 using FeroCourse.Data.Entities;
-using FeroCourse.Data.ViewModels;
-using FeroCourse.Services;
 using FeroCourse.ServicesInterface;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace FeroCourse.Areas.Admin.Controllers
+[Area("Admin")]
+public class CourseController : Controller
 {
-    [Area("Admin")]
-    public class CourseController : Controller
+    private readonly ApplicationDbContext _dbcontext;
+    private readonly IFileUploadService _FileUploadService;
+
+    public CourseController(ApplicationDbContext dbcontext, IFileUploadService FileUploadService)
     {
-        private readonly ApplicationDbContext _dbcontext;
-        private readonly IFileUploadService _FileUploadService;
+        _dbcontext = dbcontext;
+        _FileUploadService = FileUploadService;
+    }
 
-        public CourseController(ApplicationDbContext dbcontext, IFileUploadService FileUploadService)
+    public IActionResult Index() => View();
+
+    // ----------------- CREATE PAGE -----------------
+    [HttpGet]
+    public IActionResult CourseCreate()
+    {
+        LoadCategoryDropdown();
+        return View(new CourseVM());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CourseCreate(CourseVM vm)
+    {
+        // Upload Image
+        if (vm.Imagefile != null)
         {
-            _dbcontext = dbcontext;
-            _FileUploadService = FileUploadService;
-        }
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-
-        [HttpGet]
-        public IActionResult CourseCreate()
-        {
-            var AllCategorydata = _dbcontext.Categorys.ToList();
-
-            var CategoryDropDown = AllCategorydata.Select(static x =>
-                    new SelectListItem { Value = x.CategoryId.ToString(), Text = x.CategoryName }
-
-            ).ToList();
-
-            ViewBag.CategoryDropDown = CategoryDropDown;
-
-            return View();
-
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CourseCreate(CourseVM vm)
-        {
-
-            if (vm.Imagefile != null)
+            var imagepath = await _FileUploadService.UploadImageAsync(vm.Imagefile, "upload");
+            if (!string.IsNullOrEmpty(imagepath))
             {
-                var imagepath = await _FileUploadService.UploadImageAsync(vm.Imagefile, "upload");
-
-                if (!string.IsNullOrEmpty(imagepath))
-                {
-
-                    vm.ThumbnailPath = imagepath;
-                }
-
+                vm.ThumbnailPath = imagepath;
             }
-            var data = new Course();
-
-            data.Title = vm.Title;
-
-            data.Description = vm.Description;
-            data.InstructorName = vm.InstructorName;
-            data.Price = vm.Price;
-            data.DiscountPrice = vm.DiscountPrice;
-            data.ThumbnailPath = vm.ThumbnailPath;
-
-            _dbcontext.Courses.Add(data);
-            _dbcontext.SaveChanges();
-            return RedirectToAction("Courselist");
         }
 
-        
-        public IActionResult Courselist()
+        // Save Data
+        var data = new Course
         {
+            Title = vm.Title,
+            Description = vm.Description,
+            InstructorName = vm.InstructorName,
+            Price = vm.Price,
+            DiscountPrice = vm.DiscountPrice,
+            ThumbnailPath = vm.ThumbnailPath,
+            CategoryId = vm.CategoryId
+        };
 
-            var data = _dbcontext.Courses.Select(x => new CourseVM
+        _dbcontext.Courses.Add(data);
+        _dbcontext.SaveChanges();
+
+        // Reload dropdown before returning view
+        LoadCategoryDropdown();
+
+        return RedirectToAction("Courselist");
+    }
+
+    // ----------------- COURSE LIST -----------------
+    public IActionResult Courselist()
+    {
+        var data = _dbcontext.Courses.Select(x => new CourseVM
+        {
+            CourseId = x.CourseId,
+            Title = x.Title,
+            Description = x.Description,
+            InstructorName = x.InstructorName,
+            Price = x.Price,
+            DiscountPrice = x.DiscountPrice,
+            ThumbnailPath = x.ThumbnailPath
+        }).ToList();
+
+        return View(data);
+    }
+
+    // ----------------- GET COURSE BY ID -----------------
+    [HttpGet]
+    public IActionResult GetCourse(int id)
+    {
+        var data = _dbcontext.Courses
+            .Where(x => x.CourseId == id)
+            .Select(x => new CourseVM
             {
-                CourseId=x.CourseId,
+                CourseId = x.CourseId,
                 Title = x.Title,
                 Description = x.Description,
                 InstructorName = x.InstructorName,
                 Price = x.Price,
                 DiscountPrice = x.DiscountPrice,
-                ThumbnailPath = x.ThumbnailPath,
-            }).ToList();
+                ThumbnailPath = "/" + x.ThumbnailPath
+            }).FirstOrDefault();
 
-            return View(data);
-        }
+        if (data == null)
+            return NotFound();
 
-        [HttpGet]
-        public IActionResult GetCourse(int id)
-        {
-            var data = _dbcontext.Courses
-                    .Where(x => x.CourseId == id)
-                    .Select(x => new CourseVM
-                    {
-                        CourseId = x.CourseId,
-                        Title = x.Title,
-                        Description = x.Description,
-                        InstructorName = x.InstructorName,
-                        Price = x.Price,
-                        DiscountPrice = x.DiscountPrice,
-
-                    }).FirstOrDefault();
-
-            if (data == null)
-                return NotFound();
-
-            return Json(data);
-
-
-        }
-
-
-        [HttpPost]
-        public IActionResult CourseEdit(CourseVM viewmodel)
-        {
-
-            var data = new Course();
-
-            data.CourseId = viewmodel.CourseId;
-            data.Title = viewmodel.Title;
-            data.InstructorName = viewmodel.InstructorName;
-            data.Description = viewmodel.Description;
-            data.Price = viewmodel.Price;
-            data.DiscountPrice = viewmodel.DiscountPrice;
-
-
-            _dbcontext.Courses.Update(data);
-            _dbcontext.SaveChanges();
-            return Json("");
-        }
-
-        [HttpPost]
-        public IActionResult CourseDelete(int id)
-        {
-            if (id == 0)
-            {
-                return Json("Course not valid");
-            }
-            var checkdata = _dbcontext.Courses.Where(x => x.CourseId == id).FirstOrDefault();
-            if (checkdata != null)
-            {
-                _dbcontext.Remove(checkdata);
-                _dbcontext.SaveChanges();
-                return Ok();
-            }
-
-            return BadRequest();
-
-        }
-
-        [HttpGet]
-
-        public IActionResult CourseDetails(int id)
-        {
-            var data = _dbcontext.Courses
-                .Where(x => x.CourseId == id)
-                .Select(x => new CourseVM
-                {
-
-                    CourseId = x.CourseId,
-                    Title = x.Title,
-                    Description = x.Description,
-                    InstructorName = x.InstructorName,
-                    Price = x.Price,
-                    DiscountPrice = x.DiscountPrice,
-
-
-
-                }).FirstOrDefault();
-            if (data == null)
-                return NotFound();
-            return View(data);
-        }
+        return Json(data);
     }
 
+    // ----------------- EDIT COURSE -----------------
+    [HttpPost]
+    public async Task<IActionResult> CourseEditAsync([FromForm] CourseVM vm)
+    {
+        if (vm.CourseId == 0)
+            return BadRequest("Invalid Course");
+
+        var course = _dbcontext.Courses.FirstOrDefault(x => x.CourseId == vm.CourseId);
+        if (course == null)
+            return NotFound("Course not found");
+
+        // New Image Upload
+        if (vm.Imagefile != null)
+        {
+            var imagepath = await _FileUploadService.UploadImageAsync(vm.Imagefile, "upload");
+            if (!string.IsNullOrEmpty(imagepath))
+            {
+                vm.ThumbnailPath = imagepath;
+            }
+        }
+        else
+        {
+            vm.ThumbnailPath = course.ThumbnailPath; // keep old image
+        }
+
+        // Update Values
+        course.Title = vm.Title;
+        course.Description = vm.Description;
+        course.InstructorName = vm.InstructorName;
+        course.Price = vm.Price;
+        course.DiscountPrice = vm.DiscountPrice;
+        course.CategoryId = vm.CategoryId;
+        course.ThumbnailPath = vm.ThumbnailPath;
+
+        _dbcontext.Courses.Update(course);
+        _dbcontext.SaveChanges();
+
+        return Json("success");
+    }
+
+    // ----------------- DELETE COURSE -----------------
+    [HttpPost]
+    public IActionResult CourseDelete(int id)
+    {
+        var course = _dbcontext.Courses.FirstOrDefault(x => x.CourseId == id);
+        if (course != null)
+        {
+            _dbcontext.Courses.Remove(course);
+            _dbcontext.SaveChanges();
+            return Ok();
+        }
+        return BadRequest();
+    }
+
+    // ----------------- LOAD DROPDOWN -----------------
+    private void LoadCategoryDropdown()
+    {
+        var AllCategorydata = _dbcontext.Categorys.ToList();
+        ViewBag.CategoryDropDown = AllCategorydata.Select(x =>
+            new SelectListItem
+            {
+                Value = x.CategoryId.ToString(),
+                Text = x.CategoryName
+            }
+        ).ToList();
+    }
 }
-
-
-
-

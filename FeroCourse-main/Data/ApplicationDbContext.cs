@@ -14,4 +14,5 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Category> Categorys { get; set; }
     public DbSet<Lookup> Lookups { get; set; }
     public DbSet<Course> Courses { get; set; }
+    public DbSet<CourseClass> Classes { get; set; }
 }
